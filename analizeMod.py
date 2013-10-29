@@ -1,12 +1,12 @@
 from __future__ import division
 from collections import defaultdict
 from math import log
-from math import exp
+from sklearn import metrics
 
 workingDir = 'D:/Development/Projects/SDA/O-course/hometask1/data/'
 trimDown = 5000
 trimUp = 9
-minLen = 1
+minLen = 3
 
 def train(samples):
     classes, freq = defaultdict(lambda : 0), defaultdict(lambda : 0)
@@ -54,6 +54,9 @@ def test(actual, expected):
         print 'recall =', tp / (tp + fn)
     if tp > 0:
         print 'quality = ', (tp + tn) / (tp + tn + fp + fn)
+    fpr, tpr, thresholds = metrics.roc_curve(expected, actual, pos_label=1)
+    auc = metrics.auc(fpr,tpr)
+    print "roc-curve accuracy:", auc
 
 def crossValidation(data):
     return 0
@@ -63,14 +66,14 @@ def writeToFile(filename, data):
         for urlid, label in data:
             f.write(str(urlid) + ',' + str(label) + '\n')
 
-if __name__ == '__main__':
+def main(trainFile, testFile, outputFile = '',testResult = True):
     #read samples first
     trainSamples = []
     testSamples = []
     testId = []
-    with open(workingDir + 'train.txt', 'r') as f:
+    with open(workingDir + trainFile, 'r') as f:
         trainSamples = f.readlines()
-    with open(workingDir + 'test.txt', 'r') as f:
+    with open(workingDir + testFile, 'r') as f:
         testSamples = f.readlines()
     #now select feaures
     samples = [line.replace(',', '').
@@ -84,8 +87,13 @@ if __name__ == '__main__':
     #then train classifier
     classifier = train(features)
     #then check your answer
-    #expected = map (int, [line[1] for line in testItems])
     actual = [classify(classifier, getFeatures(line[2:]))
                 for line in testItems]
-    #test(actual, expected)
-    writeToFile('output.csv', zip(testId, actual))
+    if testResult:
+        expected = map (int, [line[1] for line in testItems])
+        test(actual, expected)
+    else:
+        writeToFile(outputFile, zip(testId, actual))
+
+if __name__ == '__main__':
+    main('trainSamples.txt', 'testSamples.txt')
