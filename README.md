@@ -8,4 +8,8 @@ Then you can just run python file (just set output filename and last flag
 as False), if you want to perform some check - just write a short script, which
 separetes train sample in two randomly, so you can now check solution, just
 removing two last args in main() function
-Good luck ;) 
+Good luck ;)
+
+Update: just fixed files contents, so just run script first, and .py next
+You'll get score 0.81388. to perform some analisys or improvements - just
+do some steps described above  

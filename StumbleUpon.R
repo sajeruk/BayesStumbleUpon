@@ -11,6 +11,7 @@ jsonToWordList <- function(json) {
   boilerplate <- unlist(fromJSON(json))
   names(boilerplate) <- NULL
   boilerplate <- paste(boilerplate,collapse=" ")
+  boilerplate <- gsub("\\n", "", boilerplate)
   boilerplate <- unlist(strsplit(boilerplate, " "))
   return (boilerplate)
 }
@@ -70,4 +71,3 @@ writeToFile <- function(filename, data, label = NULL, id = NULL) {
 writeToFile(file.path(workingDirectory, "train.txt"), resultData, train$label, train$urlid)
 #format in each line: id boilerplate
 writeToFile(file.path(workingDirectory, "test.txt"), resultTest, id = test$urlid)
-

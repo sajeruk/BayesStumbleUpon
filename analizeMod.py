@@ -3,7 +3,7 @@ from collections import defaultdict
 from math import log
 from sklearn import metrics
 
-workingDir = 'D:/Development/Projects/SDA/O-course/hometask1/data/'
+workingDir = 'D:/Development/Projects/SDA/O-course/hometask1/data/test/'
 trimDown = 5000
 trimUp = 9
 minLen = 3
@@ -96,4 +96,4 @@ def main(trainFile, testFile, outputFile = '',testResult = True):
         writeToFile(outputFile, zip(testId, actual))
 
 if __name__ == '__main__':
-    main('trainSamples.txt', 'testSamples.txt')
+    main('train.txt', 'test.txt', 'out.csv', False)
