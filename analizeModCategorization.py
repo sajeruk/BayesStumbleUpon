@@ -1,3 +1,4 @@
+#doesn't work good enough
 from __future__ import division
 from collections import defaultdict
 from math import log
@@ -5,8 +6,12 @@ from sklearn import metrics
 
 workingDir = 'D:/Development/Projects/SDA/O-course/hometask1/data/test/'
 trimDown = 5000
-trimUp = 9
-minLen = 3
+trimUp = 19
+minLen = 2
+categories = ('?', 'arts_entertainment', 'business', 'computer_internet',
+                'culture_politics', 'gaming', 'health', 'law_crime',
+                'recreation', 'religion', 'science_technology', 'sports')
+
 
 def train(samples):
     classes, freq = defaultdict(lambda : 0), defaultdict(lambda : 0)
@@ -80,19 +85,23 @@ def main(trainFile, testFile, outputFile = '',testResult = True):
                replace(';', '').replace('.', '').
                split() for line in trainSamples]
 
-
-
-    features = [(getFeatures(line[3:]), int(line[2])) for line in trainSamples]
-    #change 2 to 3 and 1 to 2
+    samples = defaultdict()
+    for theme in categories:
+        samples[theme] = [doc for doc in trainSamples if doc[1] == theme]
+    features = defaultdict()
+    for theme in categories:
+        features[theme] = [(getFeatures(line[3:]), int(line[2])) for line in
+        samples.get(theme)] #change 2 to 3 and 1 to 2
     testItems = [line.replace(',', '').
                replace(';', '').replace('.', '').
                split() for line in testSamples]
     testId = [line[0] for line in testItems]
     #then train classifier
-    classifier = train(features)
-
+    classifier = defaultdict()
+    for theme in categories:
+        classifier[theme] = train(features[theme])
     #then check your answer
-    actual = [classify(classifier, getFeatures(line[3:])) # 2 to 3
+    actual = [classify(classifier[line[1]], getFeatures(line[3:])) # 2 to 3
                 for line in testItems]
     if testResult:
         expected = map (int, [line[2] for line in testItems]) # 1 to 2

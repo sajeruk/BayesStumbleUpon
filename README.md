@@ -10,6 +10,9 @@ separetes train sample in two randomly, so you can now check solution, just
 removing two last args in main() function
 Good luck ;)
 
-Update: just fixed files contents, so just run script first, and .py next
-You'll get score 0.81388. to perform some analisys or improvements - just
-do some steps described above  
+Update: just fixed files contents, so just run R script first, then run split.py
+to get learning and testing sets. then just run analizeMod.py to check quality
+then, to get output file, simply add 2 arguments at the end of function main: 
+output filename and false. Remember also to change first two args!
+You'll get score 0.81388. You can use analizeModCategorization.py as well,
+but for now it reaches score 74.~ and is near RandomForestBenchMark.

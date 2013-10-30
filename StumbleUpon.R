@@ -44,7 +44,7 @@ for(i in 1:length(test$boiler)) {
 resultData <- clearData(resultData)
 resultTest <- clearData(resultTest)
 
-writeToFile <- function(filename, data, label = NULL, id = NULL) {
+writeToFile <- function(filename, data, alchemy, label = NULL, id = NULL) {
   fileCon <- file(filename)
   open(fileCon, open="w")
   if (!is.null(label)) {
@@ -53,10 +53,18 @@ writeToFile <- function(filename, data, label = NULL, id = NULL) {
   if (!is.null(id)) {
     ids <- as.character(id)
   }
+  alch <- as.character(alchemy)
   for (i in 1 : length(data)) {
     if (!is.null(id)) {
       writeLines(ids[i], fileCon, sep = ' ')
     }
+    #bad fix, but we don't have weather and unknown in test
+    if (alch[i] == "unknown" || alch[i] == "weather") {
+      writeLines('?', fileCon, sep = ' ')
+    } else {
+      writeLines(alch[i], fileCon, sep = ' ')
+    }
+    
     if (!is.null(label)) {
       writeLines(labels[i], fileCon, sep = ' ')
     }
@@ -68,6 +76,6 @@ writeToFile <- function(filename, data, label = NULL, id = NULL) {
 
 #finally writing files
 #format in each line: id label boilerplate
-writeToFile(file.path(workingDirectory, "train.txt"), resultData, train$label, train$urlid)
+writeToFile(file.path(workingDirectory, "train.txt"), resultData, train$alchemy_category, train$label, train$urlid)
 #format in each line: id boilerplate
-writeToFile(file.path(workingDirectory, "test.txt"), resultTest, id = test$urlid)
+writeToFile(file.path(workingDirectory, "test.txt"), resultTest, test$alchemy_category, id = test$urlid)
