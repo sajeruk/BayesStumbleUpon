@@ -1,11 +1,12 @@
 from __future__ import division
 from collections import defaultdict
 from math import log
+from math import exp
 from sklearn import metrics
 
 workingDir = 'D:/Development/Projects/SDA/O-course/hometask1/data/test/'
-trimDown = 5000
-trimUp = 9
+trimDown = 10000
+trimUp = 17
 minLen = 3
 
 def train(samples):
@@ -29,37 +30,26 @@ def getFeatures(sample):
 
 def classify(classifier, feats):
     classes, freqs, corpusLen, totalLen = classifier
-    ret = max(classes.keys(), key = lambda cl: log(classes[cl] / len(classes)) +
+    logs = [log(classes[cl] / len(classes)) +
     sum(log((freqs.get((cl, word), 0) + 1) / (totalLen + corpusLen))
-    for word in feats))
-    return ret
+    for word in feats) for cl in classes]
+    if logs[0] - logs[1] > 600:
+        return 0.0
+    elif logs[1] - logs[0] > 600:
+        return 1.0
+    else:
+        posProb = 1 / (1 + exp(logs[0] - logs[1]))
+        return posProb
+
 
 def test(actual, expected):
-    tp = fp = tn = fn = 0
-    for i in xrange(len(actual)):
-        if actual[i] == 1 and expected[i] == 1:
-            tp += 1
-        elif actual[i] == 1 and expected[i] == 0:
-            fp += 1
-        elif actual[i] == 0 and expected[i] == 1:
-            fn += 1
-        elif actual[i] == 0 and expected[i] == 0:
-            tn += 1
-    print 'tp: {0}, fp: {1}, tn: {2}, fn: {3}'.format(tp, fp, tn, fn)
-    print 'total true', tp + tn
-    print 'total false', fp + fn
-    if tp > 0:
-        print 'precision =', tp / (tp + fp)
-    if tp > 0:
-        print 'recall =', tp / (tp + fn)
-    if tp > 0:
-        print 'quality = ', (tp + tn) / (tp + tn + fp + fn)
     fpr, tpr, thresholds = metrics.roc_curve(expected, actual, pos_label=1)
     auc = metrics.auc(fpr,tpr)
     print "roc-curve accuracy:", auc
 
 def crossValidation(data):
     return 0
+
 def writeToFile(filename, data):
     with open(workingDir + filename, 'w') as f:
         f.write('urlid,label\n')
@@ -98,6 +88,7 @@ def main(trainFile, testFile, outputFile = '',testResult = True):
     #then check your answer
     actual = [classify(classifier, getFeatures(line[3:])) # 2 to 3
                 for line in testItems]
+    #print len([x for x in actual if abs(x[0] - x[1]) < 0.9])
     if testResult:
         expected = map (int, [line[2] for line in testItems]) # 1 to 2
         test(actual, expected)

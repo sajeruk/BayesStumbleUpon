@@ -75,7 +75,7 @@ writeToFile <- function(filename, data, alchemy, label = NULL, id = NULL) {
 }
 
 #finally writing files
-#format in each line: id label boilerplate
+#format in each line: id category label boilerplate
 writeToFile(file.path(workingDirectory, "train.txt"), resultData, train$alchemy_category, train$label, train$urlid)
-#format in each line: id boilerplate
+#format in each line: id category boilerplate
 writeToFile(file.path(workingDirectory, "test.txt"), resultTest, test$alchemy_category, id = test$urlid)
